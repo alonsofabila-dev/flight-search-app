@@ -1,15 +1,21 @@
 package com.encoramx.backendflightsearch.integrations;
 
 import com.encoramx.backendflightsearch.records.AmadeusAccessInfo;
+import com.encoramx.backendflightsearch.records.SearchFilters;
+import com.encoramx.backendflightsearch.records.airportandcityapi.AirlineAndCityResponseAPI;
+import com.encoramx.backendflightsearch.records.flightofferssearchapi.FlightOffersResponseApi;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.Objects;
 
 @Component
@@ -59,49 +65,72 @@ public class AmadeusFlightsAPIIntegration {
     }
 
 
-    private String setUpGETRequest(String endpoint) {
+//    public AirlineAndCityResponseAPI getAirports(String city) {
+//        String endpoint = "/v1/reference-data/locations" +
+//                "?subType=CITY" +
+//                "&keyword=" + city +
+//                "&page[limit]=5" +
+//                "&page[offset]=0" +
+//                "&sort=analytics.travelers.score" +
+//                "&view=LIGHT";
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.set("Authorization", "Bearer " + getAccessToken());
+//        HttpEntity<String> entity = new HttpEntity<>(headers);
+//
+//        String url = "https://test.api.amadeus.com" + endpoint;
+//
+//        ResponseEntity<AirlineAndCityResponseAPI> response = restTemplate.exchange(url, HttpMethod.GET, entity, AirlineAndCityResponseAPI.class);
+//
+//        return response.getBody();
+//    }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + getAccessToken());
-        HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        String url = String.format("https://test.api.amadeus.com%s", endpoint);
-
+    // quitar dependencia despues     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.0'
+    public AirlineAndCityResponseAPI getAirports(String city) {
         try {
-            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-            return response.getBody();
-        } catch (RestClientException e) {
-            logger.error(e.getMessage());
-            return "Failed to make request";
+            ClassPathResource resource = new ClassPathResource("static/mockAirportAndCityResponse.json");
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(resource.getFile(), AirlineAndCityResponseAPI.class);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load mock flight offers data", e);
         }
-
     }
 
+//    public FlightOffersResponseApi getFlightOffers(SearchFilters searchFilter) {
+//        String endpoint = "/v2/shopping/flight-offers" +
+//                "?originLocationCode=" + searchFilter.departureCity() +
+//                "&destinationLocationCode=" + searchFilter.arrivalCity() +
+//                "&departureDate=" + searchFilter.departureDate() +
+//                "&returnDate=" + searchFilter.returnDate() +
+//                "&adults=" + searchFilter.travelers().adults() +
+//                "&children=" + searchFilter.travelers().children() +
+//                "&infants=" + searchFilter.travelers().infants() +
+//                "&nonStop=" + searchFilter.nonStop() +
+//                "&currencyCode=" + searchFilter.currency();
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.set("Authorization", "Bearer " + getAccessToken());
+//        HttpEntity<String> entity = new HttpEntity<>(headers);
+//
+//        String url = "https://test.api.amadeus.com" + endpoint;
+//
+//        ResponseEntity<FlightOffersResponseApi> response = restTemplate.exchange(url, HttpMethod.GET, entity, FlightOffersResponseApi.class);
+//
+//        return response.getBody();
+//    }
 
-    public String getAirports(String city) {
-        String endpoint = String.format(
-                "/v1/reference-data/locations" +
-                        "?subType=CITY" +
-                        "&keyword=%s" +
-                        "&page[limit]=5" +
-                        "&page[offset]=0" +
-                        "&sort=analytics.travelers.score" +
-                        "&view=LIGHT",
-                city
-        );
-        return setUpGETRequest(endpoint);
+
+    // quitar dependencia despues  implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.0'
+    public FlightOffersResponseApi getFlightOffers(SearchFilters searchFilter) {
+        try {
+            ClassPathResource resource = new ClassPathResource("static/mockFlightOffersResponse.json");
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(resource.getFile(), FlightOffersResponseApi.class);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load mock flight offers data", e);
+        }
     }
 
-
-    public String getAirlinesInfo() {
-        String endpoint = "/v1/reference-data/airlines?airlineCodes=BA";
-        return setUpGETRequest(endpoint);
-    }
-
-
-    public String getFlightOffers() {
-        String endpoint = "/v2/shopping/flight-offers?originLocationCode=SYD&destinationLocationCode=BKK&departureDate=2024-11-01&adults=1&max=2";
-        return setUpGETRequest(endpoint);
-    }
 
 }
