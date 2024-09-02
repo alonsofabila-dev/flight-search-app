@@ -1,7 +1,7 @@
-FROM openjdk:22-jdk-slim
-LABEL authors="jorge.fabila"
+FROM openjdk:22
+WORKDIR /BackendFlightSearch
 
-WORKDIR /backend-flight-search
+CMD ["./gradlew", "clean", "bootJar"]
 
 COPY build/libs/*.jar app.jar
 
