@@ -25,24 +25,37 @@ export function FlightCard({ itineraryIndex, flightOffer, dictionaries }: Flight
         return `${hours}:${minutes}`;
     }
 
-    function calculateTimeDifference(endTime: string, startTime: string): string {
-        const [startHours, startMinutes] = startTime.split(':').map(Number);
-        const [endHours, endMinutes] = endTime.split(':').map(Number);
+    function calculateTimeDifference(endTime: string, startTime: string,): string {
+        const startDate = new Date(startTime);
+        const endDate = new Date(endTime);
 
-        const startTotalMinutes = startHours * 60 + startMinutes;
-        const endTotalMinutes = endHours * 60 + endMinutes;
+        const diffMilliseconds = endDate.getTime() - startDate.getTime();
+        const diffMinutes = Math.floor(diffMilliseconds / 60000);
 
-        const diffMinutes = endTotalMinutes - startTotalMinutes;
         const diffHours = Math.floor(diffMinutes / 60);
         const remainingMinutes = diffMinutes % 60;
 
         return `${diffHours}h ${remainingMinutes}m`;
     }
 
+
+
     function formatDuration(duration: string): string {
-        const length = duration.length;
-        const hours = duration.slice(length - 6, length - 4);
-        const minutes = duration.slice(length - 3, length - 1);
+        duration = duration.replace('PT', '');
+
+        let hours = '0';
+        let minutes = '00';
+
+        const hourMatch = duration.match(/(\d+)H/);
+        const minuteMatch = duration.match(/(\d+)M/);
+
+        if (hourMatch) {
+            hours = hourMatch[1];
+        }
+
+        if (minuteMatch) {
+            minutes = minuteMatch[1];
+        }
 
         return `${hours}h ${minutes}m`;
     }
@@ -81,7 +94,7 @@ export function FlightCard({ itineraryIndex, flightOffer, dictionaries }: Flight
                                     if (index < flightOffer.itineraries[itineraryIndex].segments.length - 1) {
                                         return (
                                             <p key={index}>
-                                                {segment.arrival.iataCode} {calculateTimeDifference(formatTime(flightOffer.itineraries[itineraryIndex].segments[index + 1].departure.at), formatTime(segment.arrival.at))}
+                                                {segment.arrival.iataCode} {calculateTimeDifference(flightOffer.itineraries[itineraryIndex].segments[index + 1].departure.at, segment.arrival.at)}
                                             </p>
                                         );
                                     }
@@ -147,7 +160,7 @@ export function FlightCard({ itineraryIndex, flightOffer, dictionaries }: Flight
                                                     </div>
                                                     {index < flightOffer.itineraries[itineraryIndex].segments.length - 1 && (
                                                         <div className="text-center my-4">
-                                                            <p className="text-gray-500">Layover Time: {calculateTimeDifference(formatTime(flightOffer.itineraries[itineraryIndex].segments[index + 1].departure.at), formatTime(segment.arrival.at))}</p>
+                                                            <p className="text-gray-500">Layover Time: {calculateTimeDifference(flightOffer.itineraries[itineraryIndex].segments[index + 1].departure.at, segment.arrival.at)}</p>
                                                             <p className="text-gray-500">In: {flightOffer.itineraries[itineraryIndex].segments[index + 1].departure.iataCode}</p>
                                                         </div>
                                                     )}

@@ -20,7 +20,7 @@ export function FlightsList() {
 
     const getFlightOffers = async (sortField: string = '', sortDirection: string = '') => {
         try {
-            const searchFormValues = location.state;
+            const { searchFormValues } = location.state || {};
             const queryParams = new URLSearchParams({ sortField, sortDirection }).toString();
             const response = await getOffers({ ...searchFormValues }, `/test/flight-offers?${queryParams}`);
             setDictionaries(response.data.dictionaries);

@@ -11,7 +11,7 @@ interface FlightProps {
 export function Flight({ flightOffer, dictionaries}: FlightProps) {
     return (
         <div>
-            {flightOffer.oneWay ?
+            {flightOffer.itineraries.length === 1 ?
 
                 <Row gutter={[8, 8]} className="mb-2">
                     <FlightCard flightOffer={flightOffer} dictionaries={dictionaries} itineraryIndex={0}/>

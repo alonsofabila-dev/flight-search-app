@@ -60,16 +60,15 @@ export function SearchFlightForm() {
         const formattedDepartureDate = formatDateToYYYYMMDD(formValues.departureDate);
         const formattedReturnDate = formatDateToYYYYMMDD(formValues.returnDate);
 
-        const searchData = {
+        const searchFormValues = {
             ...formValues,
             departureCity: formattedDepartureCity,
             arrivalCity: formattedArrivalCity,
             departureDate: formattedDepartureDate,
             returnDate: formattedReturnDate,
-        };
+        }
 
-
-        navigate('/flight-offers', { state: { searchData } });
+        navigate('/flight-offers', { state: { searchFormValues } });
     };
 
 
