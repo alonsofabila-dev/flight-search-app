@@ -1,11 +1,13 @@
 services:
   frontend:
     build:
-      context: ./frontend-flight-search 
+      context: ./frontend-flight-search
     ports:
       - "5173:5173"
     depends_on:
       - backend
+    networks:
+      - my_network
 
   backend:
     build:
@@ -14,3 +16,8 @@ services:
       - "9090:9090"
     environment:
       - SPRING_PROFILES_ACTIVE=dev
+    networks:
+      - my_network
+
+networks:
+  my_network:
