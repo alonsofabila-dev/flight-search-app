@@ -10,11 +10,22 @@ This project is a web application that allows users to search for flight offers 
 
 ## Prerequisites
 
+- Amadeus api key and secret
 - Prerequisites
 - Docker
 - Node.js
 - Java 22
 - Gradle
+
+### Get Amadeus API key and secret
+
+You can send me a message via teams so I can give you the the secrets to run the app or do the following:
+
+1. Register in Amedeus: https://developers.amadeus.com/register
+
+2. Once Registered and Loged in go to: https://developers.amadeus.com/my-apps and create an app
+
+3. Once the app is created you can get your api key and secret to write them in the application.properties file in the backend direactory
 
 # Getting Started
 
